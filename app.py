@@ -1,9 +1,9 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config["SQLAlchemy_DATABASE_URI"] = "sqlite:///todo.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 db = SQLAlchemy(app)
 
 class Todo(db.Model):
@@ -14,12 +14,24 @@ class Todo(db.Model):
 
     def ___repr__(self):
         return "<Task %r>" % self.id
+                                                                                                                                          
     
-    
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 
 def index():
-    return render_template("index.html")
+    if request.method == "POST":
+        todo_content = request.form["content"]
+        new_todo = Todo(content=todo_content)
+        try:
+            db.session.add(new_todo)
+            db.session.commit()
+            return redirect("/")
+        except:
+            return "Something went wrong!"
+    else:
+        todos = Todo.query.order_by(Todo.date_created).all()
+        return render_template("index.html", todos=todos)
+        
 
 if __name__ == "__main__":
     app.run(debug=True)
