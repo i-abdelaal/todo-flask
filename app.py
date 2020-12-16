@@ -43,6 +43,23 @@ def dlelte(id):
         return redirect("/")
     except:
         return "Couldn't delete!"
+
+@app.route("/update/<int:id>", methods=["GET", "POST"])
+
+def update(id):
+
+    todo = Todo.query.get_or_404(id)
+    if request.method == "POST":
+        todo.content = request.form["content"]
+
+        try:
+            db.session.commit()
+            return redirect("/")
+        except:
+            return "Couldn't update!"
+    else: 
+        return render_template("update.html", todo=todo)
+
         
 
 if __name__ == "__main__":
