@@ -29,6 +29,7 @@ def index():
         except:
             return "Couldn't create!"
     else:
+        
         todos = Todo.query.order_by(Todo.date_created).all()
         return render_template("index.html", todos=todos)
 
