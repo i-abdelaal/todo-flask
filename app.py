@@ -27,10 +27,22 @@ def index():
             db.session.commit()
             return redirect("/")
         except:
-            return "Something went wrong!"
+            return "Couldn't create!"
     else:
         todos = Todo.query.order_by(Todo.date_created).all()
         return render_template("index.html", todos=todos)
+
+@app.route("/delete/<int:id>")
+
+def dlelte(id):
+    todo_to_delete = Todo.query.get_or_404(id)
+
+    try:
+        db.session.delete(todo_to_delete)
+        db.session.commit()
+        return redirect("/")
+    except:
+        return "Couldn't delete!"
         
 
 if __name__ == "__main__":
